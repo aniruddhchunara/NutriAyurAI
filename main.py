@@ -3,8 +3,7 @@ from menu import menu
 from utils import get_age
 from utils import get_weight
 from utils import get_height
-from database import delete_patient
-
+from utils import pause
 from database import (
     create_table,
     add_patient,
@@ -52,39 +51,35 @@ while True:
 
         else:
 
-            for patient in data:
+            patients = get_patients()
 
-                print("\nID:", patient[0])
-                print("Name:", patient[1])
-                print("Age:", patient[2])
-                print("Weight:", patient[3])
-                print("Height:", patient[4])
+            for patient in patients:
+
+                patient.display()
 
     elif choice == "3":
 
         search_name = input("Enter patient name: ")
 
-        patient = search_patients(search_name)
+        patient = search_patient(search_name)
 
         if patient:
 
             print("\nPatient Found")
 
-            print("ID:", patient[0])
-            print("Name:",patient[1])
-            print("Age:",patient[2])
-            print("Weight:",patient[3])
-            print("Height:",patient[4])
-
-            bmi = patient[3] / (patient[4] **2)
-
-            print("BMI:", round(bmi,2))
+            print("Name:",patient.name)
+            print("Age:",patient.age)
+            print("Weight:",patient.weight)
+            print("Height:",patient.height)
+            print("BMI:", round(patient.calculate_bmi(),2))
+            
 
         else:
 
             print("Patient not found ")
 
-        print("Search module coming next.")
+        pause()
+
 
     elif choice == "4":
 
@@ -136,6 +131,9 @@ while True:
             print("Average BMI:", round(avg_bmi, 2))
         else:
             print("Average BMI:, No data")
+
+
+    elif choice == "7":
 
         print("Thank you for using NutriAyur AI.")
         break

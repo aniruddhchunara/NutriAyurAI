@@ -1,4 +1,5 @@
 import sqlite3
+from patient import Patient
 
 def connect():
 
@@ -56,11 +57,50 @@ def get_patients():
         "SELECT * FROM patients"
     )
 
-    data = cursor.fetchall()
+    rows = cursor.fetchall()
 
     conn.close()
 
-    return data
+    Patients = []
+
+    for row in rows:
+        
+        patient = Patient(
+        row[1],      #name
+        row[2],      #age
+        row[3],      #weight
+        row[4]      #height
+    )
+
+
+        patients.append(Patient)
+
+    return
+
+def get_patients():
+
+    conn, cursor = connect()
+
+    cursor.execute("SELECT * FROM patients")
+
+    rows = cursor.fetchall()
+
+    conn.close()
+
+    patients = []
+
+    for row in rows:
+
+        patient = Patient(
+            row[1],
+            row[2],
+            row[3],
+            row[4]
+        )
+
+        patients.append(patient)
+
+    return patients
 
 
 def search_patient(name):
@@ -78,25 +118,27 @@ def search_patient(name):
 
     conn.close()
 
-    return patient
+    return patients
 
 def delete_patient(name):
 
     conn, cursor = connect()
 
     cursor.execute(
-        """,
+        """
         DELETE FROM patients
         WHERE LOWER(name) =LOWER(?)
-        """,
-        (name,)
-    )
+        """ ,
+        (name,))
+
 
     conn.commit()
 
-    deleted = cursor.rowcut
+    deleted = cursor.rowcount
 
     conn.close()
+
+    return deleted
 
 
 def update_patient(name, age, weight, height):

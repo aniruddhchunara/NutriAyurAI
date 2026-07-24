@@ -34,3 +34,8 @@ def get_height():
 
             print("please eenter a valid height. ")
 
+
+
+def pause():
+
+    input ("\npress Enter to return to the Main Menu....")
