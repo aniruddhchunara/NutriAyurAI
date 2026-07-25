@@ -42,6 +42,7 @@ while True:
         weight = get_weight()
         height = get_height()
 
+
         activity_factor = get_activity_factor()
 
         patient = Patient(

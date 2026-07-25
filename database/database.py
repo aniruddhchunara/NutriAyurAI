@@ -78,7 +78,7 @@ def add_patient(patient):
 
 #         patients.append(Patient)
 
-#     return 
+#     return
 
 def get_patients():
 

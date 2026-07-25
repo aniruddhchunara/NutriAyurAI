@@ -23,16 +23,16 @@ def get_height():
 
     while True:
         try:
-            height = float(input("Enter height: "))
+            height = float(input("Enter Height (cm): "))
 
-            if height > 10:
-                height = height/100
+            if height <= 0:
+                print("Height must be greater than 0.")
+                continue
 
             return height
 
         except ValueError:
-
-            print("please eenter a valid height. ")
+            print("Please enter a valid height.")
 
 
 def pause():
