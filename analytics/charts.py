@@ -1,14 +1,15 @@
 import os
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 from analytics.data_loader import load_data
-
 from analytics.reports import create_reports_folder
+
 
 def bmi_category(bmi):
 
     if bmi < 18.5:
-        return "underweight"
+        return "Underweight"
 
     elif bmi < 25:
         return "Normal"
@@ -17,7 +18,7 @@ def bmi_category(bmi):
         return "Overweight"
 
     else:
-        return "obese"
+        return "Obese"
 
 
 def bmi_distribution():
@@ -25,23 +26,19 @@ def bmi_distribution():
     df = load_data()
 
     df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
-
     df["BMI Category"] = df["bmi"].apply(bmi_category)
 
     counts = df["BMI Category"].value_counts()
 
-    plt.figure(figsize=(8, 5))
+    plt.figure(figsize=(15, 11))
 
     counts.plot(kind="bar")
 
     plt.title("BMI Category Distribution")
-
     plt.xlabel("BMI Category")
-
     plt.ylabel("Number of Patients")
 
     plt.tight_layout()
-
     plt.show()
 
 
@@ -54,25 +51,18 @@ def age_distribution():
     plt.hist(df["age"], bins=10)
 
     plt.title("Age Distribution of Patients")
-
     plt.xlabel("Age")
-
     plt.ylabel("Number of Patients")
 
     plt.tight_layout()
-
     plt.show()
-
 
 
 def bmi_pie_chart():
 
     df = load_data()
 
-    # Calculate BMI
     df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
-
-    # Create BMI Category
     df["BMI Category"] = df["bmi"].apply(bmi_category)
 
     counts = df["BMI Category"].value_counts()
@@ -87,7 +77,6 @@ def bmi_pie_chart():
     )
 
     plt.title("BMI Category Distribution")
-
     plt.axis("equal")
 
     plt.show()
@@ -95,88 +84,164 @@ def bmi_pie_chart():
 
 def health_dashboard():
 
+    print("Health Dashboard Started")
+
     df = load_data()
 
-    # Calculate BMI
     df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
-
-    # Create BMI Category
     df["BMI Category"] = df["bmi"].apply(bmi_category)
 
     bmi_counts = df["BMI Category"].value_counts()
 
+    total_patients = len(df)
+
+    avg_age = df["age"].mean()
+
+    avg_weight = df["weight"].mean()
+
+    avg_height = df["height"].mean()
+
+    avg_bmi = df["bmi"].mean()
+
+    generated_time = datetime.now().strftime("%d-%m-%Y %I:%M %p")
+
+
     plt.figure(figsize=(14, 10))
 
-# ---------------- Bar Chart ----------------
+    # ---------------- Bar Chart ----------------
 
     ax1 = plt.subplot(2, 2, 1)
 
-    bmi_counts.plot(kind="bar", ax=ax1)
+    bmi_counts.plot(kind="bar",
+                    ax=ax1,
+                   color=[
+                        "#42A5F5",
+                        "#66BB6A",
+                        "#FFA726",
+                        "#EF5350"
+                    ][:len(bmi_counts)],
+                    edgecolor="black"
+                    )
+    
+    for bar in ax1.patches:
+
+        height = bar.get_height()
+
+        ax1.text(
+            bar.get_x() + bar.get_width() / 2,
+            height,
+            int(height),
+            ha="center",
+            va="bottom",
+            fontsize=11,
+            fontweight="bold"
+        )
 
     ax1.set_title("BMI Category Distribution")
-
     ax1.set_xlabel("Category")
-
     ax1.set_ylabel("Patients")
+    ax1.grid(
+        axis="y",
+        linestyle="--",
+        alpha=0.4
+    )
 
-# ---------------- Histogram ----------------
+    # ---------------- Histogram ----------------
 
     ax2 = plt.subplot(2, 2, 2)
 
-    ax2.hist(df["age"], bins=10)
+    ax2.hist(
+        df["age"],
+        bins=10,
+        color="mediumseagreen",
+        edgecolor="black"
+    )
 
     ax2.set_title("Age Distribution")
-
     ax2.set_xlabel("Age")
-
     ax2.set_ylabel("Patients")
+    ax2.grid(
+        axis="y",
+        linestyle="--",
+        alpha=0.4
+     )
 
-# ---------------- Pie Chart ----------------
+    # ---------------- Pie Chart ----------------
 
-    ax3 = plt.subplot(2,2,3)
+    ax3 = plt.subplot(2, 2, 3)
+
     ax3.pie(
-    bmi_counts,
-    labels=bmi_counts.index,
-    autopct="%1.1f%%",
-    startangle=90
+        bmi_counts,
+        labels=bmi_counts.index,
+        autopct="%1.1f%%",
+        startangle=90,
+        shadow=True
     )
 
     ax3.set_title("BMI Percentage")
 
-# ---------------- Summary ----------------
+    # ---------------- Summary ----------------
 
-    ax4 = plt.subplot(2,2,4)
-
+    ax4 = plt.subplot(2, 2, 4)
     ax4.axis("off")
-    summary = f"""
-    Total Patients :{len(df)}
 
-    Average Age : {df["age"].mean():.1f} years
-    Average Weight : {df["weight"].mean():.1f} kg
-    Average Height : {df["height"].mean():.1f} cm
-    BMI : {df["bmi"].mean():.2f}
-    """
+
+    ax4.set_facecolor("#F8F9FA")
+    
+    for spine in ax4.spines.values():
+        spine.set_linewidth(1.2)
+        spine.set_color("gray")
+
+
+    summary = (
+        f"Total Patients : {total_patients}\n\n"
+        f"Average BMI : {avg_bmi:.2f}\n\n"
+        f"Average Age : {avg_age:.1f} years\n\n"
+        f"Average Weight : {avg_weight:.1f} kg\n\n"
+        f"Average Height : {avg_height:.1f} cm"
+    )
+
 
     ax4.text(
-    0.05,
-    0.95,
-    summary,
-    fontsize=12,
-    va="top"
-)
-    plt.suptitle(
-    "NutriAyurAI Health Analytics Dashboard",
-    fontsize=18
-)
+        0.05,
+        0.95,
+        summary,
+        fontsize=14,
+        va="top",
+        linespacing=1.6
+    )
 
-    plt.tight_layout()
+
+    plt.suptitle(
+        "NutriAyurAI Health Analytics Dashboard",
+        fontsize=22,
+        fontweight="bold",
+        y=0.98
+    )
+
+    plt.figtext(
+    0.5,
+    0.02,
+    f"Generated by NutriAyurAI | {generated_time}",
+    ha="center",
+    fontsize=10,
+    color="gray"
+    )
+
+
+
+    plt.tight_layout(rect=[0,0.03,1,0.95])
 
     folder = create_reports_folder()
 
     plt.savefig(
-    os.path.join(folder, "health_dashboard.png"),
-    dpi=300,
-    bbox_inches="tight"
-)
+        os.path.join(folder, "health_dashboard.png"),
+        dpi=300,
+        bbox_inches="tight"
+    )
 
-plt.show()
+    plt.show()
+
+
+if __name__ == "__main__":
+    health_dashboard()
