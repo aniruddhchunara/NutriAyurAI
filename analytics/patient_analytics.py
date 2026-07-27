@@ -67,7 +67,7 @@ def bmi_category_filter():
     df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
 
     # Create BMI Category
-    df["BMI Category"] = df["bmi"].apply(bmi_category)
+    df["BMI category"] = df["bmi"].apply(bmi_category)
 
     print("\nAvailable Categories")
     print("--------------------")
@@ -77,11 +77,11 @@ def bmi_category_filter():
     print("Obese")
 
     category = input(
-        "\nEnter BMI Category : "
+        "\nEnter BMI category : "
     ).strip().title()
 
     result = df[
-        df["BMI Category"] == category
+        df["BMI category"] == category
     ]
 
     if result.empty:
@@ -111,10 +111,21 @@ def age_range_filter():
     print("\n" + "=" * 40)
     print("        AGE RANGE FILTER")
     print("=" * 40)
-
-    min_age = int(input("Enter Minimum Age : "))
-    max_age = int(input("Enter Maximum Age : "))
     
+    while True:
+        try:
+
+            min_age = int(input("Enter Minimum Age : "))
+            max_age = int(input("Enter Maximum Age : "))
+
+            if min_age > max_age:
+                print("Minimum age cannot be greater than maximum age.\n")
+                continue
+            break
+
+        except ValueError:
+            print("Please enter valid integer values.\n")
+
     result = df[
     (df["age"] >= min_age) &
     (df["age"] <= max_age)
@@ -138,7 +149,147 @@ def age_range_filter():
 
         print("=" * 60)
 
+def top_5_highest_bmi():
+
+    df = load_data()
+
+    df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
+
+    top_patients = df.sort_values(
+        by = "bmi",
+        ascending=False
+    )
+
+    top_patients = top_patients.head(5)
+
+    print("\n" + "=" * 60)
+    print("      TOP 5 HIGHEST BMI PATIENTS")
+    print("=" * 60)
+
+    print(
+        top_patients[
+            ["name", "age", "weight", "height", "bmi"]
+        ].to_string(index=False)
+    )
+print("=" * 60)
+
+
+def top_5_lowest_bmi():
+
+    df = load_data()
+
+    df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
+
+    lowest_patients = df.sort_values(
+        by="bmi",
+        ascending=True
+    )
+    lowest_patients = lowest_patients.head(5)
+
+    print("\n" + "=" * 60)
+    print("        TOP 5 LOWEST BMI PATIENTS")
+    print("=" * 60)
+
+    print(
+         lowest_patients[
+                ["name", "age", "weight", "height", "bmi"]
+        ].to_string(index=False)
+    )
+
+print("=" * 60)
+
+
+def health_summary():
+    df = load_data()
+
+    df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
+    df["BMI category"] = df["bmi"].apply(bmi_category)
+
+
+    total_patients = len(df)
+
+    average_age = df["age"].mean()
+    average_weight = df["weight"].mean()
+    average_height = df["height"].mean()
+    average_bmi = df["bmi"].mean()
+    highest_bmi = df["bmi"].max()
+    lowest_bmi = df["bmi"].max()
+    bmi_counts = df["BMI category"].value_counts()
+
+    print("\n" + "=" * 60)
+    print("             HEALTH SUMMARY REPORT")
+    print("=" * 60)
+
+    print(f"Total Patients      : {total_patients}")
+
+    print(f"Average Age         : {average_age:.2f} Years")
+
+    print(f"Average Weight      : {average_weight:.2f} Kg")
+
+    print(f"Average Height      : {average_height:.2f} cm")
+
+    print(f"Average BMI         : {average_bmi:.2f}")
+
+    print(f"Highest BMI         : {highest_bmi:.2f}")
+
+    print(f"Lowest BMI          : {lowest_bmi:.2f}")
+
+    print("\nBMI category Counts")
+    print("-" * 25)
+
+    for category, count in bmi_counts.items():
+
+        print(f"{category:<20}: {count}")
+
+    print("=" * 60)
+
+
+def analytics_menu():
+
+    while True:
+
+        print("\n" + "=" *45)
+        print("      PATIENT ANALYTICS MENU")
+        print("=" * 45)
+
+        print("1.Search Patient")
+        print("2.BMI Category Filter")
+        print("3.Age Range Filter")
+        print("4.Top 5 Highest BMI")
+        print("5.Top 5 Lowest BMI")
+        print("6.Healthy Summary Report")
+        print("7.Exit")
+
+        choice = input("\Enter your Choice : ")
+
+
+        if choice == "1":
+            search_patient()
+        elif choice == "2":
+            bmi_category_filter()
+        elif choice =="3":
+            age_range_filter()
+        elif choice == "4":
+            top_5_highest_bmi()
+        elif choice =="5":
+            top_5_lowest_bmi()
+        elif choice =="6":
+            health_summary()
+        elif choice == "7":
+            print("\nThank you for using NutriAyurAI!")
+
+            break
+        else:
+            print("\nInvalid choice! Please try again.")
+
+
+
+
 if __name__ == "__main__":
+    analytics_menu()
     search_patient()
     bmi_category_filter()
     age_range_filter()
+    top_5_highest_bmi()
+    top_5_lowest_bmi()
+    health_summary()
