@@ -1,5 +1,6 @@
 from models.patient import Patient
 from utils.menu import menu
+from ml.predict import predict_bmi
 from utils.validators import (
     get_age,
     get_weight,
@@ -257,6 +258,13 @@ while True:
 
 
     elif choice == "13":
+
+        predict_bmi()
+
+        pause()
+
+
+    elif choice == "14":
 
         print("Thank you for using NutriAyur AI.")
         break

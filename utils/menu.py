@@ -13,4 +13,5 @@ def menu():
     print("10. Search Appointments")
     print("11. update Appointments")
     print("12. delete Appointments")
-    print("13. Exit")
+    print("13. Predict BMI (Machine Learning)")
+    print("14. Exit")
