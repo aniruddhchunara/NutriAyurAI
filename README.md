@@ -98,17 +98,21 @@ NutriAyurAI/
 
 ---
 
-# 🚀 Upcoming Features
+## ✅ Completed Features
 
-- Machine Learning Health Prediction
+- Patient Management (CRUD)
+- SQLite Database
+- Appointment Management
+- Analytics Dashboard
+- Excel Reports
+- Machine Learning BMI Prediction
+- BMI Health Recommendation
+- Synthetic Dataset Generation (500+ Records)
+
+## 🚧 Upcoming
+
 - Streamlit Web Dashboard
-- Authentication System
-- Cloud Deployment
-- REST API
-- AI Nutrition Recommendation
-- PDF Report Generation
-
----
+- Deployment
 
 # 📸 Screenshots
 
