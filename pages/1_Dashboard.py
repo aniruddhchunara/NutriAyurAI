@@ -1,14 +1,22 @@
 import streamlit as st
-import plotly.express as px
 
 from analytics.data_loader import load_data
-from components.cards import kpi_card
+
 from components.theme import load_theme
+from components.sidebar import app_sidebar
+from components.navbar import navbar
+from components.cards import kpi_card
+from components.charts import (
+    bmi_distribution_chart,
+    age_distribution_chart
+)
+from components.tables import recent_patients
+from components.footer import footer
 
 
-# --------------------------------------------------
+# ----------------------------------------
 # PAGE CONFIG
-# --------------------------------------------------
+# ----------------------------------------
 
 st.set_page_config(
     page_title="Dashboard",
@@ -16,28 +24,36 @@ st.set_page_config(
     layout="wide"
 )
 
+# ----------------------------------------
+# LOAD THEME
+# ----------------------------------------
+
 load_theme()
 
-# --------------------------------------------------
-# TITLE
-# --------------------------------------------------
+# ----------------------------------------
+# SIDEBAR
+# ----------------------------------------
 
-st.title("🏥 NutriAyurAI Dashboard")
-st.caption("Professional Healthcare Analytics Dashboard")
+app_sidebar()
 
-# --------------------------------------------------
+# ----------------------------------------
+# NAVBAR
+# ----------------------------------------
+
+navbar(
+    "Dashboard",
+    "Professional Healthcare Analytics Dashboard"
+)
+
+# ----------------------------------------
 # LOAD DATA
-# --------------------------------------------------
+# ----------------------------------------
 
 df = load_data()
 
 # BMI
 df["BMI"] = df["weight"] / ((df["height"] / 100) ** 2)
 
-
-# --------------------------------------------------
-# BMI CATEGORY
-# --------------------------------------------------
 
 def bmi_category(bmi):
 
@@ -56,122 +72,56 @@ def bmi_category(bmi):
 
 df["BMI Category"] = df["BMI"].apply(bmi_category)
 
-# --------------------------------------------------
-# KPI CARDS
-# --------------------------------------------------
+# ----------------------------------------
+# KPI
+# ----------------------------------------
 
-col1, col2, col3, col4 = st.columns(4)
+c1, c2, c3, c4 = st.columns(4)
 
-with col1:
+with c1:
     kpi_card(
         "👥 Total Patients",
         len(df)
     )
 
-with col2:
+with c2:
     kpi_card(
         "❤️ Average BMI",
         f"{df['BMI'].mean():.2f}"
     )
 
-with col3:
+with c3:
     kpi_card(
-        "⚖️ Average Weight",
+        "⚖ Average Weight",
         f"{df['weight'].mean():.1f} kg"
     )
 
-with col4:
+with c4:
     kpi_card(
         "📏 Average Height",
         f"{df['height'].mean():.1f} cm"
     )
 
-st.divider()
-
-# --------------------------------------------------
+# ----------------------------------------
 # CHARTS
-# --------------------------------------------------
+# ----------------------------------------
 
 left, right = st.columns(2)
 
 with left:
-
-    bmi_chart = px.pie(
-        df,
-        names="BMI Category",
-        hole=0.45,
-        title="BMI Category Distribution",
-        color="BMI Category",
-        color_discrete_sequence=px.colors.qualitative.Set2
-    )
-
-    st.plotly_chart(
-        bmi_chart,
-        use_container_width=True
-    )
+    bmi_distribution_chart(df)
 
 with right:
+    age_distribution_chart(df)
 
-    age_chart = px.histogram(
-        df,
-        x="age",
-        nbins=10,
-        title="Age Distribution",
-        color_discrete_sequence=["#22C55E"]
-    )
+# ----------------------------------------
+# TABLE
+# ----------------------------------------
 
-    st.plotly_chart(
-        age_chart,
-        use_container_width=True
-    )
+recent_patients(df)
 
-st.divider()
+# ----------------------------------------
+# FOOTER
+# ----------------------------------------
 
-# --------------------------------------------------
-# RECENT PATIENTS
-# --------------------------------------------------
-
-st.subheader("📋 Recent Patients")
-
-st.dataframe(
-    df.tail(10),
-    use_container_width=True
-)
-
-st.divider()
-
-# --------------------------------------------------
-# HEALTH SUMMARY
-# --------------------------------------------------
-
-st.subheader("💡 Health Summary")
-
-left, right = st.columns(2)
-
-with left:
-
-    st.success(f"""
-Total Patients : {len(df)}
-
-Average BMI : {df['BMI'].mean():.2f}
-
-Normal BMI Patients :
-{len(df[df['BMI Category']=='Normal'])}
-""")
-
-with right:
-
-    st.info(f"""
-Underweight :
-{len(df[df['BMI Category']=='Underweight'])}
-
-Overweight :
-{len(df[df['BMI Category']=='Overweight'])}
-
-Obese :
-{len(df[df['BMI Category']=='Obese'])}
-""")
-
-st.divider()
-
-st.caption("© 2026 NutriAyurAI | Professional Healthcare Analytics Dashboard")
+footer()
