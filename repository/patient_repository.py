@@ -1,9 +1,8 @@
-from analytics.data_loader import load_data
+from database.database import get_patients
 
 
 def get_all_patients():
     """
-    Load all patients.
+    Return all patients from the database.
     """
-
-    return load_data()
+    return get_patients()
