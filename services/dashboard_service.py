@@ -1,8 +1,7 @@
-from repository import get_all_patients
 from utils import calculate_bmi
 
 
-def get_dashboard_data_data(repository):
+def get_dashboard_data(repository):
     """
     Load patient data and prepare dashboard metrics.
     """

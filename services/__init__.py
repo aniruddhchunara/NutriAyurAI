@@ -1,1 +1,1 @@
-from .dashboard_service import *
+# services package

@@ -103,7 +103,7 @@ class Patient:
 
         if bmi >= 30:
             return "High Risk"
-        
+
         elif self.age >= 60:
             return "High Risk"
 
