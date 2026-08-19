@@ -1,9 +1,14 @@
+import os
 import sqlite3
 from models.patient import Patient
 
 def connect():
 
-    conn = sqlite3.connect("patients.db")
+    conn = sqlite3.connect("database/nutriayurai.db")
+
+    conn.execute(
+        "PRAGMA foreign_keys = ON"
+    )
 
     cursor = conn.cursor()
 
@@ -51,34 +56,7 @@ def add_patient(patient):
     conn.commit()
     conn.close()
 
-# def get_patients():
 
-#     conn, cursor = connect()
-
-#     cursor.execute(
-#         "SELECT * FROM patients"
-#     )
-
-#     rows = cursor.fetchall()
-
-#     conn.close()
-
-#     Patients = []
-
-#     for row in rows:
-        
-#         patient = Patient(
-#         row[1],      #name
-#         row[2],      #age
-#         row[3],      #weight
-#         row[4],     #height
-#         row[5]      #activity_factor
-#     )
-
-
-#         patients.append(Patient)
-
-#     return
 
 def get_patients():
 
@@ -398,3 +376,151 @@ def delete_appointment(patient_name):
     conn.close()
 
     return deleted
+
+
+
+# ==========================================================
+# DIET PLAN TABLES
+# ==========================================================
+
+def create_diet_plan_tables():
+
+    conn, cursor = connect()
+
+    # ======================================================
+    # DIET PLANS TABLE
+    # ======================================================
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS diet_plans (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            patient_name TEXT NOT NULL,
+
+            plan_name TEXT NOT NULL,
+
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+        )
+    """)
+
+    # ======================================================
+    # DIET PLAN MEALS TABLE
+    # ======================================================
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS diet_plan_meals (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            diet_plan_id INTEGER NOT NULL,
+
+            meal_type TEXT NOT NULL,
+
+            meal_time TEXT NOT NULL,
+
+            calories REAL DEFAULT 0,
+
+            protein REAL DEFAULT 0,
+
+            food_items TEXT,
+
+            rasa TEXT,
+
+            virya TEXT,
+
+            digestion TEXT,
+
+            notes TEXT,
+
+            FOREIGN KEY (diet_plan_id)
+            REFERENCES diet_plans(id)
+
+        )
+    """)
+
+    # ======================================================
+    # CHECK EXISTING COLUMNS
+    # ======================================================
+
+    cursor.execute(
+        "PRAGMA table_info(diet_plan_meals)"
+    )
+
+    existing_columns = [
+        column[1]
+        for column in cursor.fetchall()
+    ]
+
+    # ======================================================
+    # ADD STATUS COLUMN
+    # ======================================================
+
+    if "status" not in existing_plan_columns:
+
+        cursor.execute("""
+            ALTER TABLE diet_plans
+            ADD COLUMN status TEXT DEFAULT 'Active'
+        """)
+
+    # ======================================================
+    # ADD UPDATED DATE COLUMN
+    # ======================================================
+
+    if "updated_at" not in existing_plan_columns:
+
+        cursor.execute("""
+            ALTER TABLE diet_plans
+            ADD COLUMN updated_at TEXT
+        """)
+
+
+
+
+    # ======================================================
+    # ADD NEW COLUMNS SAFELY
+    # ======================================================
+
+    if "protein" not in existing_columns:
+
+        cursor.execute("""
+            ALTER TABLE diet_plan_meals
+            ADD COLUMN protein REAL DEFAULT 0
+        """)
+
+    if "rasa" not in existing_columns:
+
+        cursor.execute("""
+            ALTER TABLE diet_plan_meals
+            ADD COLUMN rasa TEXT
+        """)
+
+    if "virya" not in existing_columns:
+
+        cursor.execute("""
+            ALTER TABLE diet_plan_meals
+            ADD COLUMN virya TEXT
+        """)
+
+    if "digestion" not in existing_columns:
+
+        cursor.execute("""
+            ALTER TABLE diet_plan_meals
+            ADD COLUMN digestion TEXT
+        """)
+
+    # ======================================================
+    # SAVE CHANGES
+    # ======================================================
+
+    conn.commit()
+
+    conn.close()
+
+
+if __name__ == "__main__":
+
+    create_diet_plan_tables()
+
+    print("Diet plan tables created successfully!")
