@@ -1,9 +1,10 @@
-import streamlit as st
 import os
+import streamlit as st
 
 from services.prediction_service import predict_health_status
 from services.patient_service import fetch_all_patients
 from utils.pdf_generator import generate_health_report
+
 
 # ==========================================================
 # SESSION STATE
@@ -21,9 +22,12 @@ def get_patient_by_name(patients, name):
     """
     Return a patient object using patient name.
     """
+
     for patient in patients:
+
         if patient.name == name:
             return patient
+
     return None
 
 
@@ -33,10 +37,10 @@ def get_patient_by_name(patients, name):
 
 patients = fetch_all_patients()
 
-patient_names = []
-
-for patient in patients:
-    patient_names.append(patient.name)
+patient_names = [
+    patient.name
+    for patient in patients
+]
 
 
 # ==========================================================
@@ -60,6 +64,7 @@ selected_patient = st.selectbox(
 patient = None
 
 if selected_patient:
+
     patient = get_patient_by_name(
         patients,
         selected_patient
@@ -70,9 +75,16 @@ if selected_patient:
 # PREDICTION FORM
 # ==========================================================
 
-with st.form("prediction_form", clear_on_submit=False):
+with st.form(
+    "prediction_form",
+    clear_on_submit=False
+):
 
     col1, col2 = st.columns(2)
+
+    # ======================================================
+    # PATIENT HEALTH INPUTS
+    # ======================================================
 
     with col1:
 
@@ -86,7 +98,9 @@ with st.form("prediction_form", clear_on_submit=False):
 
         weight = st.number_input(
             "Weight (kg)",
-            value=float(patient.weight) if patient else 60.0,
+            value=float(patient.weight)
+            if patient
+            else 60.0,
             min_value=1.0,
             step=0.1
         )
@@ -95,14 +109,18 @@ with st.form("prediction_form", clear_on_submit=False):
 
         height = st.number_input(
             "Height (cm)",
-            value=float(patient.height) if patient else 170.0,
+            value=float(patient.height)
+            if patient
+            else 170.0,
             min_value=1.0,
             step=0.1
         )
 
         if height < 50:
+
             st.warning(
-                "⚠ Please enter height in centimeters (e.g. 170), not meters (1.70)."
+                "⚠️ Please enter height in centimeters "
+                "(e.g. 170), not meters (1.70)."
             )
 
         activity = st.selectbox(
@@ -116,17 +134,33 @@ with st.form("prediction_form", clear_on_submit=False):
             ]
         )
 
+    # ======================================================
+    # ACTIVITY FACTOR
+    # ======================================================
+
     activity_map = {
+
         "Sedentary": 1.2,
+
         "Lightly Active": 1.375,
+
         "Moderately Active": 1.55,
+
         "Very Active": 1.725,
+
         "Extra Active": 1.9
     }
 
     activity_factor = activity_map[activity]
 
-    predict = st.form_submit_button("🤖 Predict Health")
+    # ======================================================
+    # PREDICT BUTTON
+    # ======================================================
+
+    predict = st.form_submit_button(
+        "🤖 Predict Health",
+        use_container_width=True
+    )
 
 
 # ==========================================================
@@ -135,20 +169,42 @@ with st.form("prediction_form", clear_on_submit=False):
 
 if predict:
 
-    result = predict_health_status(
-        age,
-        weight,
-        height,
-        activity_factor
-    )
+    # Prevent obviously invalid height values.
+    if height < 50:
 
-    result["Name"] = patient.name if patient else "Guest Patient"
-    result["Activity Level"] = activity
+        st.error(
+            "Height must be at least 50 cm. "
+            "Please enter height in centimeters."
+        )
 
-    st.session_state.prediction_result = result
+        st.stop()
 
-if not os.path.exists("reports"):
-    os.makedirs("reports")
+    try:
+
+        result = predict_health_status(
+            age,
+            weight,
+            height,
+            activity_factor
+        )
+
+        result["Name"] = (
+            patient.name
+            if patient
+            else "Guest Patient"
+        )
+
+        result["Activity Level"] = activity
+
+        st.session_state.prediction_result = result
+
+    except ValueError as error:
+
+        st.error(str(error))
+
+        st.session_state.prediction_result = None
+
+
 # ==========================================================
 # SHOW RESULT
 # ==========================================================
@@ -157,59 +213,119 @@ if st.session_state.prediction_result:
 
     result = st.session_state.prediction_result
 
+    # ======================================================
+    # REPORT DIRECTORY
+    # ======================================================
+
+    os.makedirs(
+        "reports",
+        exist_ok=True
+    )
+
+    # ======================================================
+    # GENERATE HEALTH REPORT
+    # ======================================================
+
     pdf_path = os.path.join(
         "reports",
         "Health_Report.pdf"
     )
 
-
-with open(pdf_path, "rb") as pdf_file:
-
-    st.download_button(
-        label="📄 Download Health Report",
-        data=pdf_file,
-        file_name="NutriAyurAI_Health_Report.pdf",
-        mime="application/pdf",
-        key="download_health_report"
+    generate_health_report(
+        result,
+        pdf_path
     )
 
-    st.success("✅ Prediction Completed")
+    # ======================================================
+    # SUCCESS MESSAGE
+    # ======================================================
+
+    st.success(
+        "✅ Prediction Completed"
+    )
+
+    # ======================================================
+    # HEALTH METRICS
+    # ======================================================
 
     c1, c2, c3 = st.columns(3)
 
     with c1:
-        st.metric("❤️ BMI", result["BMI"])
 
-    with c2:
-        st.metric("📊 Status", result["Status"])
-
-    with c3:
-        st.metric("⭐ Health Score", result["Health Score"])
-
-    c4, c5, c6 = st.columns(3)
-
-    with c4:
-        st.metric("🔥 BMR", result["BMR"])
-
-    with c5:
-        st.metric("🍽 Calories", result["Calories"])
-
-    with c6:
-        st.metric("🥩 Protein", result["Protein"])
-
-    c7, c8 = st.columns(2)
-
-    with c7:
-        st.metric("💧 Water", result["Water"])
-
-    with c8:
         st.metric(
-            "⚖ Ideal Weight",
-            f"{result['Ideal Min']} - {result['Ideal Max']} kg"
+            "⚖️ BMI",
+            result["BMI"]
         )
 
-    st.info(f"🎯 Goal: {result['Goal']}")
+    with c2:
 
-    st.success(result["Recommendation"])
+        st.metric(
+            "📊 Status",
+            result["Status"]
+        )
 
+    with c3:
 
+        st.metric(
+            "🔥 Calories",
+            result["Calories"]
+        )
+
+    c4, c5 = st.columns(2)
+
+    with c4:
+
+        st.metric(
+            "🥩 Protein",
+            f"{result['Protein']} g"
+        )
+
+    with c5:
+
+        st.metric(
+            "💧 Water",
+            f"{result['Water']} L"
+        )
+
+    # ======================================================
+    # IDEAL WEIGHT
+    # ======================================================
+
+    st.metric(
+        "⚖️ Ideal Weight",
+        f"{result['Ideal Min']} - "
+        f"{result['Ideal Max']} kg"
+    )
+
+    # ======================================================
+    # GOAL
+    # ======================================================
+
+    st.info(
+        f"🎯 Goal: {result['Goal']}"
+    )
+
+    # ======================================================
+    # RECOMMENDATION
+    # ======================================================
+
+    st.success(
+        result["Recommendation"]
+    )
+
+    # ======================================================
+    # DOWNLOAD HEALTH REPORT
+    # ======================================================
+
+    with open(
+        pdf_path,
+        "rb"
+    ) as pdf_file:
+
+        st.download_button(
+            label="📄 Download Health Report",
+            data=pdf_file,
+            file_name="NutriAyurAI_Health_Report.pdf",
+            mime="application/pdf",
+            key="download_health_report"
+        )
