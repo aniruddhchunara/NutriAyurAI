@@ -183,7 +183,7 @@ def statistics():
     total = cursor.fetchone()[0]
 
     cursor.execute(
-        "SELECT AVG(weight/(height*height)) FROM patients"
+        "SELECT AVG(weight / ((height / 100.0) * (height / 100.0))) FROM patients"
     )
 
     avg_bmi = cursor.fetchone()[0]

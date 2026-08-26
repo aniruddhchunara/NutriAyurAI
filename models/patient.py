@@ -8,7 +8,8 @@ class Patient:
         self.activity_factor = activity_factor
 
     def calculate_bmi(self):
-        bmi = self.weight / (self.height ** 2)
+        height_m = self.height / 100
+        bmi = self.weight / (height_m ** 2)
         return bmi
 
     def health_status(self):
@@ -68,7 +69,7 @@ class Patient:
             ]
 
     def calculate_bmr(self):
-        height_cm = self.height * 100
+        height_cm = self.height
 
         bmr = (
             (10 * self.weight)
@@ -123,7 +124,7 @@ class Patient:
         bmi = self.calculate_bmi()
 
         if bmi >= 30:
-            reasons.append("BMMI indicates obesity.")
+            reasons.append("BMI indicates obesity.")
 
         elif bmi >= 25:
             reasons.append("BMI indicates overweight.")
@@ -152,7 +153,7 @@ class Patient:
         print("Name              :", self.name)
         print("Age               :", self.age)
         print("Weight            :", self.weight, "kg")
-        print("Height            :", self.height, "m")
+        print("Height            :", self.height, "cm")
         print("Activity Factor   :", self.activity_factor)
         print("BMI               :", round(self.calculate_bmi(), 2))
         print("Health Status     :", self.health_status())
