@@ -1,32 +1,3 @@
-import streamlit as st
-
-from components import (
-    load_theme,
-    navbar,
-    app_sidebar,
-    footer
-)
-
-
-# ==========================================================
-# PAGE CONFIGURATION
-# ==========================================================
-
-st.set_page_config(
-    page_title="AI Prediction",
-    page_icon="🤖",
-    layout="wide"
-)
-
-load_theme()
-app_sidebar()
-
-navbar(
-    "AI Prediction",
-    "Health Prediction using AI"
-)
-
-
 # ==========================================================
 # PREDICT HEALTH STATUS
 # ==========================================================
