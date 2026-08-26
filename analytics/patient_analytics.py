@@ -38,12 +38,6 @@ def search_patient():
 
 
 
-def bmi_category_filter():
-
-    df = load_data()
-
-    df["bmi"] = df["weight"] / ((df["height"] / 100) ** 2)
-
 def bmi_category(bmi):
 
     if bmi < 18.5:
@@ -191,7 +185,7 @@ def top_5_lowest_bmi():
     print("=" * 60)
 
     print(
-         lowest_patients[
+            lowest_patients[
                 ["name", "age", "weight", "height", "bmi"]
         ].to_string(index=False)
     )
