@@ -1,9 +1,11 @@
-import sqlite3
 import pandas as pd
+
+from database.database import connect
+
 
 def load_data():
 
-    conn = sqlite3.connect("patients.db")
+    conn, _ = connect()
 
     df = pd.read_sql_query(
         "SELECT * FROM patients",
@@ -13,4 +15,3 @@ def load_data():
     conn.close()
 
     return df
-    
