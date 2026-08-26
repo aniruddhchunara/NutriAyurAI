@@ -5,5 +5,4 @@ from .patient_repository import (
     delete_existing_patient
 )
 
-from .patient_repository_class import PatientRepository
 from .appointment_repository import *
