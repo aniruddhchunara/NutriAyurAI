@@ -15,7 +15,6 @@ from services.appointment_service import (
     fetch_all_appointments,
     create_new_appointment,
     fetch_appointment,
-    create_new_appointment,
     edit_existing_appointment,
     delete_existing_appointment
 )
@@ -140,23 +139,6 @@ with st.form(
     update_submit = st.form_submit_button(
         "✏️ Update Appointment"
     )
-
-    if update_submit:
-
-        updated = edit_existing_appointment(
-            update_patient,
-            update_doctor,
-            str(update_date),
-            str(update_time),
-            update_reason
-        )
-
-        if updated:
-            st.success("✅ Appointment updated successfully!")
-            st.rerun()
-        else:
-            st.error("❌ Appointment not found.")
-
     if update_submit:
 
         updated = edit_existing_appointment(
