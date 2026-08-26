@@ -9,6 +9,7 @@ from repository.diet_plan_repository import (
     get_diet_plan,
     find_duplicate_diet_plan
 )
+from datetime import date
 
 # ==========================================================
 # CREATE DIET PLAN
@@ -75,6 +76,12 @@ def create_new_diet_plan(
             raise ValueError(
                 "Duration must be greater than 0 days."
             )
+
+    if isinstance(start_date, str) and start_date:
+        start_date = date.fromisoformat(start_date)
+
+    if isinstance(end_date, str) and end_date:
+        end_date = date.fromisoformat(end_date)
 
     # ======================================================
     # DATE VALIDATION
