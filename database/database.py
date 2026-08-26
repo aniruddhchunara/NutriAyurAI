@@ -1,4 +1,4 @@
-import os
+﻿import os
 import sqlite3
 from models.patient import Patient
 
@@ -445,6 +445,16 @@ def create_diet_plan_tables():
     # ======================================================
 
     cursor.execute(
+        "PRAGMA table_info(diet_plans)"
+    )
+
+    existing_plan_columns = [
+        column[1]
+        for column in cursor.fetchall()
+    ]
+
+
+    cursor.execute(
         "PRAGMA table_info(diet_plan_meals)"
     )
 
@@ -459,10 +469,12 @@ def create_diet_plan_tables():
 
     if "status" not in existing_plan_columns:
 
-        cursor.execute("""
+        cursor.execute(
+            """
             ALTER TABLE diet_plans
             ADD COLUMN status TEXT DEFAULT 'Active'
-        """)
+            """
+        )
 
     # ======================================================
     # ADD UPDATED DATE COLUMN
