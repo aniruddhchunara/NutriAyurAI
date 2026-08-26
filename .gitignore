@@ -30,3 +30,5 @@ reports/*.pdf
 .DS_Store
 Thumbs.db
 "@ | Set-Content .gitignore
+# Root generated PDF
+health_report.pdf
