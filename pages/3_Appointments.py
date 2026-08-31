@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import date
 
 from models.appointment import Appointment
 
@@ -261,19 +262,25 @@ with st.form("appointment_form", clear_on_submit=True):
 
                 appointment_time=str(appointment_time),
 
-                reason=reason
+                reason=reason.strip()
 
             )
 
-            create_new_appointment(
-                appointment
-            )
+            try:
 
-            st.success(
-                "✅ Appointment created successfully!"
-            )
+                create_new_appointment(
+                    appointment
+                )
 
-            st.rerun()
+                st.success(
+                    "✅ Appointment created successfully!"
+                )
+
+                st.rerun()
+
+            except ValueError as e:
+
+                st.error(str(e))
 
 
 

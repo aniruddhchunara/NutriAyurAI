@@ -13,6 +13,8 @@ from utils.pdf_generator import generate_health_report
 if "prediction_result" not in st.session_state:
     st.session_state.prediction_result = None
 
+if "prediction_reset" not in st.session_state:
+    st.session_state.prediction_reset = 0
 
 # ==========================================================
 # HELPER FUNCTION
@@ -58,7 +60,8 @@ selected_patient = st.selectbox(
     "👤 Select Patient",
     patient_names,
     index=None,
-    placeholder="Select a patient..."
+    placeholder="Select a patient...",
+    key="prediction_patient"
 )
 
 patient = None
@@ -77,7 +80,7 @@ if selected_patient:
 
 with st.form(
     "prediction_form",
-    clear_on_submit=False
+    clear_on_submit=True
 ):
 
     col1, col2 = st.columns(2)
@@ -90,38 +93,36 @@ with st.form(
 
         age = st.number_input(
             "Age",
-            value=patient.age if patient else 18,
+            value=None,
+            placeholder= "Enter age (1-120 years)",
             min_value=1,
             max_value=120,
-            step=1
+            step=1,
+            key="prediction_age_{reset_id}"
         )
 
         weight = st.number_input(
             "Weight (kg)",
-            value=float(patient.weight)
-            if patient
-            else 60.0,
-            min_value=1.0,
-            step=0.1
+            value=None,
+            placeholder="Enter Weight (2-300kg)",
+            min_value=2.0,
+            max_value=300.0,
+            step=0.1,
+            key="prediction_weight_{reset_id}"
         )
 
     with col2:
 
         height = st.number_input(
             "Height (cm)",
-            value=float(patient.height)
-            if patient
-            else 170.0,
-            min_value=1.0,
-            step=0.1
+            value=None,
+            placeholder= "Enter a height (50-250 cm)",
+            min_value=50.0,
+            max_value=250.0,
+            step=0.1,
+            key="prediction_height_{reset_id}"
         )
 
-        if height < 50:
-
-            st.warning(
-                "⚠️ Please enter height in centimeters "
-                "(e.g. 170), not meters (1.70)."
-            )
 
         activity = st.selectbox(
             "Activity Level",
@@ -169,15 +170,41 @@ with st.form(
 
 if predict:
 
-    # Prevent obviously invalid height values.
-    if height < 50:
+    # ======================================================
+    # REQUIRED INPUT VALIDATION
+    # ======================================================
 
+    if age is None:
         st.error(
-            "Height must be at least 50 cm. "
-            "Please enter height in centimeters."
+            "Please enter your age."
         )
-
         st.stop()
+
+    if weight is None:
+        st.error(
+            "Please enter your weight."
+        )
+        st.stop()
+
+    if height is None:
+        st.error(
+            "Please enter your height."
+        )
+        st.stop()
+
+    # ======================================================
+    # HEIGHT VALIDATION
+    # ======================================================
+
+    if height < 50 or height > 250:
+        st.error(
+            "Height must be between 50 and 250 cm."
+        )
+        st.stop()
+
+    # ======================================================
+    # PREDICTION
+    # ======================================================
 
     try:
 
@@ -204,6 +231,14 @@ if predict:
 
         st.session_state.prediction_result = None
 
+    except Exception:
+
+        st.error(
+            "Unable to generate the health prediction. "
+            "Please check your inputs and try again."
+        )
+
+        st.session_state.prediction_result = None
 
 # ==========================================================
 # SHOW RESULT
@@ -329,3 +364,13 @@ if st.session_state.prediction_result:
             mime="application/pdf",
             key="download_health_report"
         )
+
+        st.divider()
+
+    if st.button(
+        "➕ New Prediction",
+        use_container_width=True
+    ):
+        st.session_state.prediction_result = None
+        st.session_state.prediction_reset += 1
+        st.rerun()

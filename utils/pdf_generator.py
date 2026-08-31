@@ -815,7 +815,7 @@ def generate_health_report(data, filename):
 
     story.append(
         Paragraph(
-            "Version 1.0",
+            "Version 2.0",
             footer_style
         )
     )

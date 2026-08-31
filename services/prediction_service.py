@@ -1,8 +1,16 @@
+from math import isfinite
+
+
 # ==========================================================
 # PREDICT HEALTH STATUS
 # ==========================================================
 
-def predict_health_status(age, weight, height, activity_factor):
+def predict_health_status(
+    age,
+    weight,
+    height,
+    activity_factor
+):
     """
     Predict health status and nutrition requirements.
     """
@@ -11,38 +19,113 @@ def predict_health_status(age, weight, height, activity_factor):
     # INPUT VALIDATION
     # ======================================================
 
-    if age <= 0 or age > 120:
+    # ------------------------------------------------------
+    # AGE
+    # ------------------------------------------------------
+
+    if not isinstance(age, (int, float)) or isinstance(age, bool):
+        raise ValueError(
+            "Age must be a valid number."
+        )
+
+    if not isfinite(float(age)):
+        raise ValueError(
+            "Age must be a valid finite number."
+        )
+
+    if age < 1 or age > 120:
         raise ValueError(
             "Age must be between 1 and 120 years."
         )
 
-    if weight <= 0:
+    # ------------------------------------------------------
+    # WEIGHT
+    # ------------------------------------------------------
+
+    if not isinstance(weight, (int, float)) or isinstance(weight, bool):
         raise ValueError(
-            "Weight must be greater than 0 kg."
+            "Weight must be a valid number."
         )
 
-    if height <= 0:
+    if not isfinite(float(weight)):
         raise ValueError(
-            "Height must be greater than 0 cm."
+            "Weight must be a valid finite number."
         )
 
-    if activity_factor <= 0:
+    if weight < 2 or weight > 300:
         raise ValueError(
-            "Activity factor must be greater than 0."
+            "Weight must be between 2 and 300 kg."
+        )
+
+    # ------------------------------------------------------
+    # HEIGHT
+    # ------------------------------------------------------
+
+    if not isinstance(height, (int, float)) or isinstance(height, bool):
+        raise ValueError(
+            "Height must be a valid number."
+        )
+
+    if not isfinite(float(height)):
+        raise ValueError(
+            "Height must be a valid finite number."
+        )
+
+    if height < 50 or height > 250:
+        raise ValueError(
+            "Height must be between 50 and 250 cm."
+        )
+
+    # ------------------------------------------------------
+    # ACTIVITY FACTOR
+    # ------------------------------------------------------
+
+    if not isinstance(
+        activity_factor,
+        (int, float)
+    ) or isinstance(activity_factor, bool):
+        raise ValueError(
+            "Activity factor must be a valid number."
+        )
+
+    if not isfinite(float(activity_factor)):
+        raise ValueError(
+            "Activity factor must be a valid finite number."
+        )
+
+    valid_activity_factors = {
+        1.2,
+        1.375,
+        1.55,
+        1.725,
+        1.9
+    }
+
+    if activity_factor not in valid_activity_factors:
+        raise ValueError(
+            "Invalid activity level."
         )
 
     # ======================================================
     # BMI
     # ======================================================
 
-    bmi = weight / ((height / 100) ** 2)
+    height_m = height / 100
+
+    bmi = weight / (height_m ** 2)
+
+    if not isfinite(float(bmi)):
+        raise ValueError(
+            "Unable to calculate a valid BMI."
+        )
 
     if bmi < 18.5:
 
         status = "Underweight"
 
         recommendation = (
-            "Increase calorie intake and eat a balanced diet."
+            "Increase calorie intake and "
+            "eat a balanced diet."
         )
 
     elif bmi < 25:
@@ -58,7 +141,8 @@ def predict_health_status(age, weight, height, activity_factor):
         status = "Overweight"
 
         recommendation = (
-            "Exercise regularly and reduce sugar intake."
+            "Exercise regularly and "
+            "reduce sugar intake."
         )
 
     else:
@@ -66,12 +150,14 @@ def predict_health_status(age, weight, height, activity_factor):
         status = "Obese"
 
         recommendation = (
-            "Consult a healthcare professional and "
-            "follow a structured weight management plan."
+            "Consult a healthcare professional "
+            "and follow a structured weight "
+            "management plan."
         )
 
     # ======================================================
-    # BMR (Mifflin-St Jeor Equation)
+    # BMR
+    # Mifflin-St Jeor Equation
     # ======================================================
 
     bmr = (
@@ -81,11 +167,21 @@ def predict_health_status(age, weight, height, activity_factor):
         + 5
     )
 
+    if not isfinite(float(bmr)):
+        raise ValueError(
+            "Unable to calculate a valid BMR."
+        )
+
     # ======================================================
-    # TDEE
+    # TDEE / CALORIES
     # ======================================================
 
     calories = bmr * activity_factor
+
+    if not isfinite(float(calories)):
+        raise ValueError(
+            "Unable to calculate daily calories."
+        )
 
     # ======================================================
     # PROTEIN
@@ -93,11 +189,21 @@ def predict_health_status(age, weight, height, activity_factor):
 
     protein = weight * 1.2
 
+    if not isfinite(float(protein)):
+        raise ValueError(
+            "Unable to calculate protein requirement."
+        )
+
     # ======================================================
     # WATER
     # ======================================================
 
     water = (weight * 35) / 1000
+
+    if not isfinite(float(water)):
+        raise ValueError(
+            "Unable to calculate water requirement."
+        )
 
     # ======================================================
     # HEALTH SCORE
@@ -127,11 +233,19 @@ def predict_health_status(age, weight, height, activity_factor):
     # IDEAL WEIGHT RANGE
     # ======================================================
 
-    height_m = height / 100
-
     ideal_min = 18.5 * (height_m ** 2)
 
     ideal_max = 24.9 * (height_m ** 2)
+
+    if not isfinite(float(ideal_min)):
+        raise ValueError(
+            "Unable to calculate ideal weight."
+        )
+
+    if not isfinite(float(ideal_max)):
+        raise ValueError(
+            "Unable to calculate ideal weight."
+        )
 
     # ======================================================
     # WEIGHT GOAL
@@ -158,37 +272,20 @@ def predict_health_status(age, weight, height, activity_factor):
     # ======================================================
 
     return {
-
         "Name": "",
-
         "Age": age,
-
         "Weight": weight,
-
         "Height": height,
-
         "Activity Factor": activity_factor,
-
         "BMI": round(bmi, 2),
-
         "Status": status,
-
         "Recommendation": recommendation,
-
         "BMR": round(bmr),
-
         "Calories": round(calories),
-
         "Protein": round(protein, 1),
-
         "Water": round(water, 2),
-
         "Health Score": health_score,
-
         "Ideal Min": round(ideal_min, 1),
-
         "Ideal Max": round(ideal_max, 1),
-
         "Goal": goal
-
     }
