@@ -1,7 +1,12 @@
-from repository import get_all_patients, get_patient
+from repository import (
+    get_all_patients,
+    get_patient,
+    update_existing_patient,
+    get_patient_by_id,
+    delete_existing_patient
+)
 from database.database import add_patient
-from repository import update_existing_patient
-from repository import delete_existing_patient
+
 
 def fetch_all_patients():
     """
@@ -12,7 +17,7 @@ def fetch_all_patients():
 
 def fetch_patient(name):
     """
-    Fetch one patient from repository.
+    Fetch one patient by name.
     """
     return get_patient(name)
 
@@ -21,22 +26,21 @@ def create_patient(patient):
     """
     Save patient to database.
     """
-    add_patient(patient)
+    return add_patient(patient)
 
 
 def edit_patient(
-    name,
+    patient_id,
     age,
     weight,
     height,
     activity_factor
 ):
-    
     """
-    Update patient information.
+    Update patient information by ID.
     """
     return update_existing_patient(
-        name,
+        patient_id,
         age,
         weight,
         height,
@@ -44,9 +48,15 @@ def edit_patient(
     )
 
 
-def remove_patient(name):
+def remove_patient(patient_id):
     """
-    Delete patient.
+    Delete patient by ID.
     """
-    return delete_existing_patient(name)
+    return delete_existing_patient(patient_id)
 
+
+def fetch_patient_by_id(patient_id):
+    """
+    Fetch one patient directly from database by ID.
+    """
+    return get_patient_by_id(patient_id)

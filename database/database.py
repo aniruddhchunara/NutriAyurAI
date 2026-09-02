@@ -77,7 +77,8 @@ def get_patients():
             row[2],
             row[3],
             row[4],
-            row[5]
+            row[5],
+            patient_id=row[0]
         )
 
         patients.append(patient)
@@ -111,23 +112,55 @@ def search_patient(name):
             row[2],
             row[3],
             row[4],
-            row[5]
+            row[5],
+            patient_id=row[0]
 
         )
 
     return None
 
-def delete_patient(name):
+
+def search_patient_by_id(patient_id):
+
+    conn, cursor = connect()
+
+    cursor.execute(
+        """
+        SELECT *
+        FROM patients
+        WHERE id = ?
+        """,
+        (patient_id,)
+    )
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row:
+
+        return Patient(
+            row[1],
+            row[2],
+            row[3],
+            row[4],
+            row[5],
+            patient_id=row[0]
+        )
+
+    return None
+
+def delete_patient(patient_id):
 
     conn, cursor = connect()
 
     cursor.execute(
         """
         DELETE FROM patients
-        WHERE LOWER(name) =LOWER(?)
-        """ ,
-        (name,))
-
+        WHERE id = ?
+        """,
+        (patient_id,)
+    )
 
     conn.commit()
 
@@ -138,7 +171,9 @@ def delete_patient(name):
     return deleted
 
 
-def update_patient(name, age, weight, height, activity_factor):
+
+
+def update_patient(patient_id, age, weight, height, activity_factor):
 
     conn, cursor = connect()
 
@@ -152,18 +187,21 @@ def update_patient(name, age, weight, height, activity_factor):
             height =?,
             activity_factor =?
 
-    WHERE LOWER(name) = LOWER(?)
+
+    WHERE id = ?
     """,
     (
             age,
             weight,
             height,
             activity_factor,
-            name
+            patient_id
     )
 )
 
     conn.commit()
+
+
 
     updated = cursor.rowcount
 

@@ -1,6 +1,7 @@
 class Patient:
 
-    def __init__(self, name, age, weight, height, activity_factor=1.55):
+    def __init__(self, name, age, weight, height, activity_factor=1.55 , patient_id=None):
+        self.id = patient_id
         self.name = name
         self.age = age
         self.weight = weight

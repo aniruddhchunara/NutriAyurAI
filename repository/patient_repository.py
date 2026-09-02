@@ -1,6 +1,7 @@
 from database.database import (
     get_patients,
     search_patient,
+    search_patient_by_id,
     update_patient,
     delete_patient
 )
@@ -19,26 +20,35 @@ def get_patient(name):
     """
     return search_patient(name)
 
+
 def update_existing_patient(
-    name,
+    patient_id,
     age,
     weight,
     height,
     activity_factor
 ):
     """
-    Update an existing patient.
+    Update an existing patient by ID.
     """
     return update_patient(
-        name,
+        patient_id,
         age,
         weight,
         height,
         activity_factor
     )
 
-def delete_existing_patient(name):
+
+def delete_existing_patient(patient_id):
     """
-    Delete patient from database.
+    Delete a patient by ID.
     """
-    return delete_patient(name)
+    return delete_patient(patient_id)
+
+
+def get_patient_by_id(patient_id):
+    """
+    Return one patient by ID.
+    """
+    return search_patient_by_id(patient_id)
