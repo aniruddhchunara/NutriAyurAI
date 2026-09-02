@@ -7,6 +7,7 @@ from repository.diet_plan_repository import (
     delete_diet_plan_meal,
     update_diet_plan_status,
     get_diet_plan,
+    delete_diet_plan,
     find_duplicate_diet_plan
 )
 from datetime import date

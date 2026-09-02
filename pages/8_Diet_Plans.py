@@ -802,6 +802,68 @@ if generate_pdf:
         )
 
 # ==========================================================
+# DELETE DIET PLAN
+# ==========================================================
+
+if st.session_state.current_diet_plan_id:
+
+    st.markdown("---")
+
+    st.markdown(
+        "### 🗑️ Delete Diet Plan"
+    )
+
+    st.warning(
+        "⚠️ Deleting this diet plan is permanent. "
+        "The diet plan and its meals will be removed."
+    )
+
+    confirm_delete = st.checkbox(
+        "I understand that this action cannot be undone.",
+        key="confirm_delete_diet_plan"
+    )
+
+    if st.button(
+        "🗑️ Delete Current Diet Plan",
+        type="primary",
+        width="stretch"
+    ):
+
+        if not confirm_delete:
+
+            st.warning(
+                "⚠️ Please confirm the deletion first."
+            )
+
+        else:
+
+            try:
+
+                delete_existing_diet_plan(
+                    st.session_state.current_diet_plan_id
+                )
+
+                st.session_state.current_diet_plan_id = None
+
+                st.success(
+                    "✅ Diet plan deleted successfully."
+                )
+
+                st.rerun()
+
+            except ValueError as error:
+
+                st.warning(
+                    f"⚠️ {error}"
+                )
+
+            except Exception as error:
+
+                st.error(
+                    f"❌ Unable to delete diet plan: {error}"
+                )
+
+# ==========================================================
 # DIET PLAN TEMPLATES
 # ==========================================================
 
