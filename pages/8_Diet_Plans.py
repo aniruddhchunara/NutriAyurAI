@@ -321,7 +321,7 @@ st.info(
 
 if st.button(
     "📋 Start New Diet Plan",
-    use_container_width="stretch"
+    width="stretch"
 ):
 
     if not patient_name:
@@ -750,7 +750,7 @@ with pdf_col1:
 
     generate_pdf = st.button(
         "📄 Generate Diet Plan PDF",
-        use_container_width="stretch"
+        width="stretch"
     )
 
 with pdf_col2:
@@ -792,7 +792,7 @@ if generate_pdf:
             data=pdf_data,
             file_name=pdf_filename,
             mime="application/pdf",
-            use_container_width="stretch"
+            width="stretch"
         )
 
     except Exception as error:
@@ -996,7 +996,7 @@ if selected_template:
 
     st.dataframe(
         preview_df,
-        use_container_width="stretch",
+        width="stretch",
         hide_index=True
     )
 
@@ -1032,7 +1032,7 @@ if selected_template:
 
     st.dataframe(
         ayurvedic_df,
-        use_container_width="stretch",
+        width="stretch",
         hide_index=True
     )
 
@@ -1338,7 +1338,7 @@ if st.session_state.current_diet_plan_id:
 
     if st.button(
         "➕ Add Meal",
-        use_container_width="stretch"
+        width="stretch"
     ):
 
         if not food_items.strip():
@@ -1613,7 +1613,7 @@ if st.session_state.current_diet_plan_id:
                     edit_clicked = st.button(
                         "✏️ Edit",
                         key=f"edit_meal_{meal_id}",
-                        use_container_width="stretch"
+                        width="stretch"
                     )
 
                 with delete_col:
@@ -1621,7 +1621,7 @@ if st.session_state.current_diet_plan_id:
                     delete_clicked = st.button(
                         "🗑️ Delete",
                         key=f"delete_meal_{meal_id}",
-                        use_container_width="stretch"
+                        width="stretch"
                     )
 
                 # ==============================================
@@ -1835,7 +1835,7 @@ if st.session_state.current_diet_plan_id:
                         save_edit = st.button(
                             "💾 Save Changes",
                             key=f"save_edit_{meal_id}",
-                            use_container_width="stretch"
+                            width="stretch"
                         )
 
                     with cancel_col:
@@ -1843,7 +1843,7 @@ if st.session_state.current_diet_plan_id:
                         cancel_edit = st.button(
                             "❌ Cancel",
                             key=f"cancel_edit_{meal_id}",
-                            use_container_width="stretch"
+                            width="stretch"
                         )
 
                     # ==========================================

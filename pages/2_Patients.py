@@ -570,7 +570,7 @@ else:
 
                 update_submit = st.form_submit_button(
                     "✏️ Update Patient",
-                    use_container_width=True
+                    width="stretch"
                 )
 
                 if update_submit:

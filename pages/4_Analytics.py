@@ -103,7 +103,7 @@ bmi_chart = px.bar(
 
 st.plotly_chart(
     bmi_chart,
-    use_container_width=True
+    width="stretch"
 )
 
 st.divider()
@@ -120,7 +120,7 @@ pie_chart = px.pie(
 
 st.plotly_chart(
     pie_chart,
-    use_container_width=True
+    width="stretch"
 )
 
 st.divider()
@@ -137,7 +137,7 @@ trend_chart = px.line(
 
 st.plotly_chart(
     trend_chart,
-    use_container_width=True
+    width="stretch"
 )
 
 st.divider()

@@ -25,7 +25,7 @@ def bmi_distribution_chart(df):
 
     st.plotly_chart(
         fig,
-        use_container_width=True
+        width="stretch"
     )
 
 
@@ -51,7 +51,7 @@ def age_distribution_chart(df):
 
     st.plotly_chart(
         fig,
-        use_container_width=True
+        width="stretch"
     )
 
 
@@ -80,7 +80,7 @@ def weight_chart(df):
 
     st.plotly_chart(
         fig,
-        use_container_width=True
+        width="stretch"
     )
 
 
@@ -109,5 +109,5 @@ def height_chart(df):
 
     st.plotly_chart(
         fig,
-        use_container_width=True
+        width="stretch"
     )

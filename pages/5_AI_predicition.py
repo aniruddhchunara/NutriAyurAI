@@ -160,7 +160,7 @@ with st.form(
 
     predict = st.form_submit_button(
         "🤖 Predict Health",
-        use_container_width=True
+        width="stretch"
     )
 
 
@@ -369,7 +369,7 @@ if st.session_state.prediction_result:
 
     if st.button(
         "➕ New Prediction",
-        use_container_width=True
+        width="stretch"
     ):
         st.session_state.prediction_result = None
         st.session_state.prediction_reset += 1

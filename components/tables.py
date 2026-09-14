@@ -9,7 +9,7 @@ import pandas as pd
 def data_table(
     df: pd.DataFrame,
     title="",
-    use_container_width=True
+    width="stretch"
 ):
 
     if title:
@@ -17,7 +17,7 @@ def data_table(
 
     st.dataframe(
         df,
-        use_container_width=use_container_width,
+        width=width,
         hide_index=True
     )
 
@@ -32,7 +32,7 @@ def recent_patients(df):
 
     st.dataframe(
         df.tail(10),
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )
 
@@ -52,6 +52,6 @@ def top_bmi_table(df):
 
     st.dataframe(
         top,
-        use_container_width=True,
+        width="stretch",
         hide_index=True
     )

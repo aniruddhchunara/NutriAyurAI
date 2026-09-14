@@ -131,7 +131,7 @@ report_date = st.date_input(
 
 generate_report = st.button(
     "📄 Generate Report",
-    use_container_width=True
+    width="stretch"
 )
 
 # ==========================================================

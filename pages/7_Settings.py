@@ -134,7 +134,7 @@ with st.form("settings_form"):
 
     save = st.form_submit_button(
         "💾 Save Settings",
-        use_container_width=True
+        width="stretch"
     )
 
 # ==========================================================
