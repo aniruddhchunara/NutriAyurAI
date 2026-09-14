@@ -296,8 +296,12 @@ def add_appointment(appointment):
     )
 )
 
+    appointment_id = cursor.lastrowid
+
     conn.commit()
     conn.close()
+
+    return appointment_id
 
 
 from models.appointment import Appointment
@@ -321,7 +325,8 @@ def get_appointments():
             row[2],  #doctor_name
             row[3],  #appointment_date
             row[4],  #appointment_time
-            row[5]   #reason
+            row[5],   #reason
+            appointment_id=row[0]
         )
 
 
@@ -337,7 +342,7 @@ def search_appointment(patient_name):
         cursor.execute(
             """
             SELECT * FROM appointments
-            WHERE LOWER(patient_name) = LOWER(?)
+            WHERE LOWER(TRIM(patient_name)) = LOWER(TRIM(?))
             """,
             (patient_name,)
         )
@@ -352,14 +357,15 @@ def search_appointment(patient_name):
                 row[2],  #doctor_name
                 row[3],  #appointment_date
                 row[4],  #appointment_time
-                row[5]   #reasson
+                row[5],   #reasson
+                appointment_id=row[0]
             )
 
         return None
 
 
 def update_appointment(
-    patient_name,
+    appointment_id,
     doctor_name,
     appointment_date,
     appointment_time,
@@ -376,14 +382,14 @@ def update_appointment(
             appointment_date = ?,
             appointment_time = ?,
             reason = ?
-        WHERE LOWER(patient_name) = LOWER(?)
+        WHERE id = ?
         """,
         (
             doctor_name,
             appointment_date,
             appointment_time,
             reason,
-            patient_name
+            appointment_id
         )
     )
 
@@ -395,16 +401,17 @@ def update_appointment(
 
     return updated
 
-def delete_appointment(patient_name):
+
+def delete_appointment(appointment_id):
 
     conn, cursor = connect()
 
     cursor.execute(
         """
         DELETE FROM appointments
-        WHERE LOWER(patient_name) = LOWER(?)
+        WHERE id = ?
         """,
-        (patient_name,)
+        (appointment_id,)
     )
 
     conn.commit()
@@ -414,7 +421,6 @@ def delete_appointment(patient_name):
     conn.close()
 
     return deleted
-
 
 
 # ==========================================================

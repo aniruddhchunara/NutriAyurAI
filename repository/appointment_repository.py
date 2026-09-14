@@ -4,7 +4,6 @@ from database.database import (
     search_appointment,
     update_appointment,
     delete_appointment
-    
 )
 
 
@@ -21,14 +20,15 @@ def get_appointment(patient_name):
 
 
 def edit_appointment(
-    patient_name,
+    appointment_id,
     doctor_name,
     appointment_date,
     appointment_time,
     reason
 ):
+
     return update_appointment(
-        patient_name,
+        appointment_id,
         doctor_name,
         appointment_date,
         appointment_time,
@@ -36,5 +36,5 @@ def edit_appointment(
     )
 
 
-def remove_appointment(patient_name):
-    return delete_appointment(patient_name)
+def remove_appointment(appointment_id):
+    return delete_appointment(appointment_id)

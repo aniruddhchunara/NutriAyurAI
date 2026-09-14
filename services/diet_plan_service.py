@@ -99,20 +99,13 @@ def create_new_diet_plan(
                 "A diet plan with the same patient, "
                 "plan name, and schedule already exists."
             )
-
-    # ======================================================
-    # CREATE DIET PLAN
-    # ======================================================
-
     return create_diet_plan(
         patient_name,
         plan_name.strip(),
         start_date,
         end_date,
         duration_days
-    )
-
-
+        )
 
 
 
@@ -384,27 +377,6 @@ def update_plan_status(
         patient_name,
         plan_name.strip()
     )
-
-    # ======================================================
-    # ADD TEMPLATE MEALS
-    # ======================================================
-
-    for meal in template["meals"]:
-
-        add_meal_to_plan(
-            diet_plan_id,
-            meal["meal_type"],
-            meal["meal_time"],
-            meal["calories"],
-            meal["protein"],
-            meal["food_items"],
-            meal["rasa"],
-            meal["virya"],
-            meal["digestion"],
-            meal["notes"]
-        )
-
-    return diet_plan_id
 
 
 # ==========================================================

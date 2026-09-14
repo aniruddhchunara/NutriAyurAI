@@ -11,6 +11,11 @@ def fetch_appointment(patient_name):
     return get_appointment(patient_name)
 
 
+
+def delete_existing_appointment(appointment_id):
+    return remove_appointment(appointment_id)
+
+
 def create_new_appointment(appointment):
 
     if not appointment.patient_name.strip():
@@ -32,7 +37,7 @@ def create_new_appointment(appointment):
 
 
 def edit_existing_appointment(
-    patient_name,
+    appointment_id,
     doctor_name,
     appointment_date,
     appointment_time,
@@ -40,13 +45,9 @@ def edit_existing_appointment(
 ):
 
     return edit_appointment(
-        patient_name,
+        appointment_id,
         doctor_name,
         appointment_date,
         appointment_time,
         reason
     )
-
-
-def delete_existing_appointment(patient_name):
-    return remove_appointment(patient_name)

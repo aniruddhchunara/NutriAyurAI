@@ -122,47 +122,85 @@ st.divider()
 
 st.subheader("✏️ Update Appointment")
 
-with st.form(
-    "update_appointment_form",
-    clear_on_submit=True
-):
+if appointments:
 
-    update_patient = st.text_input("Patient Name")
+    appointment_options = {
+        f"{appointment.patient_name.strip()} | ID: {appointment.id}": appointment
+        for appointment in appointments
+    }
 
-    update_doctor = st.text_input("Doctor Name")
-
-    update_date = st.date_input("New Appointment Date")
-
-    update_time = st.time_input("New Appointment Time")
-
-    update_reason = st.text_area("Reason")
-
-    update_submit = st.form_submit_button(
-        "✏️ Update Appointment"
+    selected_appointment_label = st.selectbox(
+        "Select Appointment",
+        list(appointment_options.keys()),
+        key="update_appointment_selector"
     )
-    if update_submit:
 
-        updated = edit_existing_appointment(
-            update_patient,
-            update_doctor,
-            str(update_date),
-            str(update_time),
-            update_reason
+    selected_appointment = appointment_options[
+        selected_appointment_label
+    ]
+
+    with st.form(
+        "update_appointment_form",
+        clear_on_submit=True
+    ):
+
+        update_doctor = st.text_input(
+            "Doctor Name",
+            value=selected_appointment.doctor_name
         )
 
-        if updated:
+        update_date = st.date_input(
+            "Appointment Date",
+            value=date.fromisoformat(
+                str(selected_appointment.appointment_date)
+            )
+        )
 
-            st.success(
-                "✅ Appointment updated successfully!"
+        update_time = st.time_input(
+            "Appointment Time",
+            value=selected_appointment.appointment_time
+        )
+
+        update_reason = st.text_area(
+            "Reason",
+            value=selected_appointment.reason
+        )
+
+        update_submit = st.form_submit_button(
+            "✏️ Update Appointment"
+        )
+
+        if update_submit:
+
+            updated = edit_existing_appointment(
+                selected_appointment.id,
+                update_doctor,
+                str(update_date),
+                str(update_time),
+                update_reason.strip()
             )
 
-            st.rerun()
+            if updated:
 
-        else:
+                st.success(
+                    "✅ Appointment updated successfully!"
+                )
 
-            st.error(
-                "❌ Appointment not found."
-            )
+                st.rerun()
+
+            else:
+
+                st.error(
+                    "❌ Unable to update appointment."
+                )
+
+else:
+
+    st.info(
+        "No appointments available to update."
+    )
+
+
 
 # ==========================================================
 # DELETE APPOINTMENT
@@ -172,38 +210,62 @@ st.divider()
 
 st.subheader("🗑 Delete Appointment")
 
-with st.form(
-    "delete_appointment_form",
-    clear_on_submit=True
-):
+if appointments:
 
-    delete_patient = st.text_input(
-        "Patient Name"
+    appointment_options = {
+        f"{appointment.patient_name.strip()} | ID: {appointment.id}": appointment
+        for appointment in appointments
+    }
+
+    selected_delete_label = st.selectbox(
+        "Select Appointment to Delete",
+        list(appointment_options.keys()),
+        key="delete_appointment_selector"
     )
 
-    delete_submit = st.form_submit_button(
-        "🗑 Delete Appointment"
-    )
+    selected_delete_appointment = appointment_options[
+        selected_delete_label
+    ]
 
-    if delete_submit:
+    with st.form(
+        "delete_appointment_form",
+        clear_on_submit=True
+    ):
 
-        deleted = delete_existing_appointment(
-            delete_patient
+        st.warning(
+            f"⚠️ You are about to delete appointment "
+            f"ID {selected_delete_appointment.id}."
         )
 
-        if deleted:
+        delete_submit = st.form_submit_button(
+            "🗑 Delete Appointment"
+        )
 
-            st.success(
-                "✅ Appointment deleted successfully!"
+        if delete_submit:
+
+            deleted = delete_existing_appointment(
+                selected_delete_appointment.id
             )
 
-            st.rerun()
+            if deleted:
 
-        else:
+                st.success(
+                    "✅ Appointment deleted successfully!"
+                )
 
-            st.error(
-                "❌ Appointment not found."
-            )
+                st.rerun()
+
+            else:
+
+                st.error(
+                    "❌ Appointment not found."
+                )
+
+else:
+
+    st.info(
+        "No appointments available to delete."
+    )
 
 
 # ==========================================================
