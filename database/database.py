@@ -36,26 +36,99 @@ def create_table():
 
     conn.close()
 
+# ==========================================================
+# AUTHENTICATION TABLE
+# ==========================================================
+
+def create_auth_table():
+
+    conn, cursor = connect()
+
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS users (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            name TEXT NOT NULL,
+
+            email TEXT NOT NULL UNIQUE,
+
+            password_hash TEXT NOT NULL,
+
+            role TEXT NOT NULL
+                CHECK (role IN ('patient', 'admin')),
+
+            patient_id INTEGER,
+
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+            FOREIGN KEY (patient_id)
+                REFERENCES patients(id)
+        )
+    """)
+
+    conn.commit()
+    conn.close()
+
+
 def add_patient(patient):
 
     conn, cursor = connect()
 
     cursor.execute("""
         INSERT INTO patients (
-        name,age ,weight, height, activity_factor)
-
-        VALUES (?, ?, ?,?,?)
-        """, (
-            patient.name,
-            patient.age,
-            patient.weight,
-            patient.height,
-            patient.activity_factor
-        ))
+            name,
+            age,
+            weight,
+            height,
+            activity_factor
+        )
+        VALUES (?, ?, ?, ?, ?)
+    """, (
+        patient.name,
+        patient.age,
+        patient.weight,
+        patient.height,
+        patient.activity_factor
+    ))
 
     conn.commit()
+
+    patient_id = cursor.lastrowid
+
     conn.close()
 
+    return patient_id
+
+
+# ==========================================================
+# LINK USER TO PATIENT
+# ==========================================================
+
+def link_user_to_patient(user_id, patient_id):
+
+    conn, cursor = connect()
+
+    cursor.execute(
+        """
+        UPDATE users
+        SET patient_id = ?
+        WHERE id = ?
+        AND role = 'patient'
+        """,
+        (
+            patient_id,
+            user_id
+        )
+    )
+
+    conn.commit()
+
+    updated = cursor.rowcount
+
+    conn.close()
+
+    return updated
 
 
 def get_patients():

@@ -688,51 +688,6 @@ if st.session_state.current_diet_plan_id:
 # DELETE DIET PLAN
 # ==================================================
 
-st.markdown("---")
-
-if st.button(
-    "🗑️ Delete This Diet Plan",
-    width="stretch",
-    key="delete_current_diet_plan"
-):
-
-    try:
-
-        deleted_result = delete_existing_diet_plan(
-            st.session_state.current_diet_plan_id
-        )
-
-        deleted_plan = deleted_result["deleted_plan"]
-        deleted_meals = deleted_result["deleted_meals"]
-
-        if deleted_plan:
-
-            st.session_state.current_diet_plan_id = None
-
-            st.success(
-                f"✅ Diet plan deleted successfully. "
-                f"Removed {deleted_meals} meal(s)."
-            )
-
-            st.rerun()
-
-        else:
-
-            st.warning(
-                "⚠️ Diet plan was not found."
-            )
-
-    except ValueError as error:
-
-        st.warning(
-            f"⚠️ {error}"
-        )
-
-    except Exception as error:
-
-        st.error(
-            f"❌ Unable to delete diet plan: {error}"
-        )
 
 # ==========================================================
 # DIET PLAN PDF EXPORT
